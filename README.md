@@ -1,6 +1,6 @@
-# 🎓 Comback EduAI — AI-Powered Smart Learning Platform
+# 🎓 EduAI — AI-Powered Smart Learning Platform
 
-Comback EduAI is a next-generation EdTech platform built with **Next.js**, **Express**, and **Neon PostgreSQL**. It utilizes **Firebase Authentication** and advanced LLMs (via **LangChain** with **Gemini / OpenRouter**) to deliver adaptive, interactive, and offline-resilient learning experiences for both students and instructors.
+ EduAI is a next-generation EdTech platform built with **Next.js**, **Express**, and **Neon PostgreSQL**. It utilizes **Firebase Authentication** and advanced LLMs (via **LangChain** with **Gemini / OpenRouter**) to deliver adaptive, interactive, and offline-resilient learning experiences for both students and instructors.
 
 ---
 
