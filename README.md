@@ -117,7 +117,6 @@ Follow these instructions to get the project running on your local machine.
    You should see: `🚀 Server running on port 5000 [development]`.
 
 ---
-
 ### 3. Frontend Setup
 1. **Open a new terminal window**, navigate to the frontend folder:
    ```bash
