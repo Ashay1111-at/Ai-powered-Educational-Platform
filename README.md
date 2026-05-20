@@ -1,6 +1,6 @@
 # 🎓 EduAI — AI-Powered Smart Learning Platform
 
- EduAI is a next-generation EdTech platform built with **Next.js**, **Express**, and **Neon PostgreSQL**. It utilizes **Firebase Authentication** and advanced LLMs (via **LangChain** with **Gemini / OpenRouter**) to deliver adaptive, interactive, and offline-resilient learning experiences for both students and instructors.
+EduAI is a next-generation EdTech platform built with **Next.js**, **Express**, and **Neon PostgreSQL**. It utilizes **Firebase Authentication** and advanced LLMs (via **LangChain** with **Gemini / OpenRouter**) to deliver adaptive, interactive, and offline-resilient learning experiences for students, instructors, and administrators.
 
 ---
 
@@ -10,127 +10,187 @@ The project is structured as a monorepo containing decoupled frontend and backen
 
 ```
 ├── backend/                  # Express REST API (TypeScript)
-│   ├── prisma/               # Schema definitions & database client
+│   ├── prisma/               # Database schemas & Prisma Client configuration
 │   └── src/
-│       ├── lib/              # Core utilities (AI fallbacks, Firebase admin, activities)
+│       ├── lib/              # Core utilities (AI fallbacks, Firebase Admin, logger)
 │       ├── middleware/       # RBAC & Firebase token verification
-│       └── routes/           # REST endpoints (AI, courses, users, community)
+│       └── routes/           # Express endpoints (AI, courses, users, community)
 │
-├── frontend/                 # Client Application (Next.js App Router)
-│   ├── public/               # Static assets & icons
+├── frontend/                 # Web Application (Next.js App Router)
+│   ├── public/               # Static assets, icons, and diagrams
 │   └── src/
-│       ├── app/              # Views (Dashboard, Student workspace, Instructor tools)
-│       ├── context/          # State providers (Firebase Auth context)
-│       └── lib/              # API interceptors and fetching logic
+│       ├── app/              # Client-side views (Dashboards, Course workspaces)
+│       ├── components/       # Reusable layout and interactive UI components
+│       ├── context/          # State providers (Firebase Auth Context)
+│       └── lib/              # API Client & Axios interceptors
 ```
 
 ---
 
-## ✨ Core Features
+## ✨ Features Breakdown
 
 ### 👨‍🎓 Student Workspace
-* **Interactive AI Tutor**: 24/7 chat-based learning companion providing step-by-step explanations and hints.
-* **Visual Doubt Solver**: Vision-based problem analysis supporting uploaded files and image OCR queries.
-* **AI Quiz Generator**: Creates customized 5-question multiple-choice quizzes complete with answers and context-aware feedback.
-* **Smart Notes**: Summarizes lengthy educational articles into clear, digestible bullet points.
-* **My Courses Tracker**: Track enrollment status, course progress bars, and read lessons formatted in rich, responsive Markdown.
+* 💬 **Interactive AI Tutor**: A 24/7 chat-based learning companion providing step-by-step explanations, custom hints, and concept breakdowns.
+* 🔍 **Visual Doubt Solver**: A vision-enabled problem solver. Students can upload screenshots of math, science, or programming questions and get instant OCR-parsed answers.
+* 📝 **AI Quiz Generator**: Generates customized 5-question multiple-choice quizzes for any lesson, complete with explanations and points reward.
+* ⚡ **Streak & Gamification**: Interactive activity tracker and heatmaps that count learning points, levels, and consecutive login streaks.
+* 📚 **Responsive Course Viewer**: Track enrollment, monitor progress bars, and read lessons rendered in rich, styled Markdown.
+* 📓 **Smart Summarizer**: Instantly turns long texts or external study notes into clear, bullet-pointed summaries.
 
 ### 👨‍🏫 Instructor Workspace
-* **AI Course Wizard**: Describe a topic, select a target audience, specify duration, and let AI build the course outline and background lessons.
-* **Manual Course Builder**: Handcraft courses manually. Dynamic forms allow teachers to type title/description, add/remove weeks, define lesson names, and insert custom lesson material directly in the browser.
-* **Hybrid Content Sourcing**: Choose whether to let the background AI generate content for a lesson, or type in customized Markdown material.
+* 🪄 **AI Course Wizard**: Just type a topic, target audience, and duration, and the AI automatically designs a complete multi-week course syllabus and generates the lesson content.
+* 🛠️ **Manual Course Builder**: A dynamic outline manager to build courses manually by adding weeks, naming lessons, and writing custom educational content directly in the browser.
+* 🎭 **Hybrid Content Sourcing**: Check a box to let the AI auto-generate lesson content, or write your own custom material using the built-in Markdown editor.
+* 📊 **Instructor Analytics**: Visual dashboards summarizing total enrolled students, course-specific progress averages, and total revenue metrics.
+
+### 👑 Administrator Console
+* 👥 **User Management**: A master directory of all registered users on the platform, showing their names, emails, signup dates, and current roles.
+* 🔑 **Role Manager (RBAC)**: Upgrade or downgrade user credentials between `STUDENT`, `INSTRUCTOR`, and `ADMIN` with security safeguards to prevent self-demotion.
+* 📈 **System Overview Stats**: High-level telemetry displaying total active sessions, user counts, course catalogs, and enrollment metrics.
+* 🏥 **System Health Check**: Verifies live database connections, storage availability, and AI API response times from the admin panel.
 
 ---
 
 ## 🛡️ Offline & Rate-Limit Resilience
 To ensure zero service downtime during network drops or API rate-limit errors (e.g. `HTTP 429 Too Many Requests`), the platform features **hybrid local fallbacks** for all core AI services:
-* **Lesson Content Fallback**: Automatically creates rich, thematic course text based on lesson and course titles.
+* **Lesson Content Fallback**: Automatically creates structured, highly informative mock lessons based on the requested titles.
 * **Quiz Fallback**: Serves a structured 5-question foundational MCQ layout for the requested topic.
 * **Notes/Tutor Fallbacks**: Executes local syntactic analysis to create summaries or guide student questions.
 * **Vision Fallback**: Inspects file buffers to output structured visual doubt advice.
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚙️ Step-by-Step Installation Guide (Beginner Friendly)
 
-### 1. Prerequisites
-* **Node.js** v18 or higher
-* A serverless/local **PostgreSQL** database (optimized for Neon Serverless Postgres)
-* A **Firebase Project** (for student/instructor authentication)
-* An API key for **Gemini** (`GOOGLE_API_KEY`) or **OpenRouter** (`OPENROUTER_API_KEY`)
+Follow these instructions to get the project running on your local machine.
 
-### 2. Backend Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Configure your environment variables. Create a `.env` file matching:
-   ```env
-   DATABASE_URL="postgresql://user:pass@host/dbname?sslmode=require"
-   PORT=5000
-   
-   # AI Configuration (Configure at least one)
-   GOOGLE_API_KEY="your-gemini-key"
-   OPENROUTER_API_KEY="your-openrouter-key"
-   
-   # Firebase configuration credentials
-   FIREBASE_PROJECT_ID="your-firebase-project-id"
-   FIREBASE_CLIENT_EMAIL="your-firebase-client-email"
-   FIREBASE_PRIVATE_KEY="your-firebase-private-key"
-   ```
-4. Synchronize database schemas and generate Prisma clients:
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
-5. *(Optional)* If you have legacy courses with missing lesson content, execute the repair script:
-   ```bash
-   npx ts-node src/migrate-lessons.ts
-   ```
-6. Start the API server in development mode:
-   ```bash
-   npm run dev
-   ```
-
-### 3. Frontend Setup
-1. Navigate to the frontend directory:
-   ```bash
-   cd ../frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Configure local environment variables. Create a `.env.local` file matching:
-   ```env
-   NEXT_PUBLIC_API_URL="http://localhost:5000/api"
-   
-   # Firebase Web Configuration
-   NEXT_PUBLIC_FIREBASE_API_KEY="your-api-key"
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="your-auth-domain"
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID="your-project-id"
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="your-storage-bucket"
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
-   NEXT_PUBLIC_FIREBASE_APP_ID="your-app-id"
-   ```
-4. Start the frontend development server:
-   ```bash
-   npm run dev
-   ```
-5. Open your browser to `http://localhost:3000` to interact with the platform.
+### 1. Prerequisites (Setup Your Tools)
+* **Node.js**: Download and install Node.js (v18 or higher) from [nodejs.org](https://nodejs.org/). This installs both `node` and `npm`.
+* **Database**: Sign up for a free PostgreSQL database at [neon.tech](https://neon.tech/) and copy your database connection string.
+* **Firebase**: 
+  1. Create a free project in the [Firebase Console](https://console.firebase.google.com/).
+  2. Go to **Build** > **Authentication**, enable the Email/Password and Google sign-in methods.
+  3. Go to **Project Settings** > **Service Accounts** and click **Generate new private key**. Keep this downloaded `.json` file safe.
 
 ---
 
-## 🛠️ Verification & Production Builds
-To test the type safety and readiness for production deployment, you can run compiling commands for both projects:
-* **Backend build**: `cd backend && npm run build` (compiles via `tsc`)
-* **Frontend build**: `cd frontend && npm run build` (compiles via Next.js compiler)
+### 2. Backend Setup
+1. **Open your Terminal/Command Prompt** and navigate to the backend folder:
+   ```bash
+   cd backend
+   ```
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+3. **Configure Environment Variables**:
+   Create a new file named `.env` in the `backend/` folder and paste the following template:
+   ```env
+   # PostgreSQL database connection string (obtained from Neon)
+   DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require"
+   
+   # Server Port
+   PORT=5000
+   
+   # Mode (development or production)
+   NODE_ENV=development
+   
+   # AI Configuration (Obtain from Google AI Studio)
+   GOOGLE_API_KEY="your-gemini-api-key"
+   
+   # Firebase Admin Configuration (Copy values from your downloaded Firebase .json key file)
+   FIREBASE_SERVICE_ACCOUNT='{"type":"service_account","project_id":"your-project-id","private_key":"-----BEGIN PRIVATE KEY-----\n..."}'
+   ```
+4. **Initialize the Database**:
+   Run the following commands to push your schema definitions to Neon and generate the Prisma Client:
+   ```bash
+   npx prisma db push
+   npx prisma generate
+   ```
+5. **Start the API Server**:
+   ```bash
+   npm run dev
+   ```
+   You should see: `🚀 Server running on port 5000 [development]`.
+
+---
+
+### 3. Frontend Setup
+1. **Open a new terminal window**, navigate to the frontend folder:
+   ```bash
+   cd frontend
+   ```
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+3. **Configure Environment Variables**:
+   Create a new file named `.env.local` in the `frontend/` folder and paste the following template:
+   ```env
+   # API Server Endpoint URL
+   NEXT_PUBLIC_API_URL="http://localhost:5000/api"
+   
+   # Firebase Web App Config (Obtained from Firebase Console > Project Settings > General > Your Apps)
+   NEXT_PUBLIC_FIREBASE_API_KEY="your-web-api-key"
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="your-auth-domain.firebaseapp.com"
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID="your-project-id"
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="your-storage-bucket.appspot.com"
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
+   NEXT_PUBLIC_FIREBASE_APP_ID="your-app-id"
+   ```
+4. **Start the Next.js Dev Server**:
+   ```bash
+   npm run dev
+   ```
+5. Open your browser and navigate to `http://localhost:3000` to start exploring the app!
+
+---
+
+## 🚀 Production Deployment Guide
+
+### 1. Deploy the Backend on Render
+1. Register on [render.com](https://render.com/).
+2. Click **New +** > **Web Service** and connect your GitHub repository.
+3. Apply these settings:
+   * **Root Directory**: `backend`
+   * **Runtime**: `Node`
+   * **Build Command**: `npm install && npx prisma generate && npm run build`
+   * **Start Command**: `npm start`
+4. Under the **Environment** tab, add your backend `.env` variables (`DATABASE_URL`, `GOOGLE_API_KEY`, `FIREBASE_SERVICE_ACCOUNT`, etc.). Make sure **`PORT`** is set to `10000` and **`NODE_ENV`** is set to `production`.
+
+---
+
+### 2. Deploy the Frontend on Vercel
+1. Register on [vercel.com](https://vercel.com/) and connect your GitHub account.
+2. Click **Add New** > **Project** and import your repository.
+3. Configure the settings:
+   * **Root Directory**: Select the `frontend` folder.
+   * **Framework Preset**: `Next.js`.
+4. Add all variables from your `frontend/.env.local` to Vercel's **Environment Variables** list.
+   * ⚠️ **IMPORTANT**: Set **`NEXT_PUBLIC_API_URL`** to your deployed Render URL ending with `/api` (e.g. `https://your-backend.onrender.com/api`).
+5. Click **Deploy**.
+
+---
+
+### 3. Add Authorized Domains in Firebase
+To allow sign-ins from your new production Vercel domain:
+1. Go to your **Firebase Console** > **Authentication** > **Settings** tab.
+2. Select **Authorized domains** on the left.
+3. Click **Add Domain** and enter your Vercel frontend URL (e.g. `your-app-name.vercel.app`). Do not include `https://` or trailing slashes.
+
+---
+
+## 🔭 Future Scope & Roadmap
+
+We plan to expand the capabilities of the EduAI platform with the following roadmap features:
+
+* 📹 **Live Classrooms**: Peer-to-peer real-time video conferencing for online lectures, complete with live AI transcription and note-taking.
+* 🧠 **RAG-Powered Deep Search**: Let students query all course documents, files, and lectures using a unified Semantic/Vector search engine.
+* 📱 **Mobile Application**: Port the student workspace into native iOS and Android apps using React Native.
+* 💬 **Multiplayer Study Lounges**: Virtual co-working rooms where students can join group quizzes and collaborate on programming labs in real-time.
+* 🏆 **Automated AI Code Evaluation**: A sandboxed execution environment where coding lessons automatically compile and evaluate student solutions.
 
 ---
 
 ## 📄 License
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](file:///d:/web%20Development/Comback/Ai%20powered%20educational%20platform/LICENSE) file for details.
