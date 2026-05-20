@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String         @id @default(uuid())
+  email           String         @unique
+  name            String?
+  role            Role           @default(STUDENT)
+  firebaseUid     String         @unique
+  avatar          String?
+  subscriptionPlan String        @default("FREE")
+  stripeCustomerId String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  activities      Activity[]
+  conversations   Conversation[]
+  courses         Course[]       @relation("InstructorCourses")
+  doubts          Doubt[]
+  enrollments     Enrollment[]
+  notes           Note[]
+  personalQuizzes PersonalQuiz[]
+  progress        Progress[]
+  studyPlans      StudyPlan[]
+  discussions     Discussion[]
+  replies         Reply[]
+}
+
+model Course {
+  id           String       @id @default(uuid())
+  title        String
+  description  String
+  instructorId String
+  price        Float        @default(0)
+  published    Boolean      @default(false)
+  image        String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  instructor   User         @relation("InstructorCourses", fields: [instructorId], references: [id])
+  enrollments  Enrollment[]
+  lessons      Lesson[]
+}
+
+model Lesson {
+  id        String     @id @default(uuid())
+  title     String
+  content   String?
+  videoUrl  String?
+  courseId  String
+  order     Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  course    Course     @relation(fields: [courseId], references: [id])
+  progress  Progress[]
+  quizzes   Quiz[]
+}
+
+model Enrollment {
+  id        String   @id @default(uuid())
+  studentId String
+  courseId  String
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id])
+  student   User     @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, courseId])
+}
+
+model Quiz {
+  id        String   @id @default(uuid())
+  title     String
+  lessonId  String
+  questions Json
+  createdAt DateTime @default(now())
+  lesson    Lesson   @relation(fields: [lessonId], references: [id])
+}
+
+model Progress {
+  id        String   @id @default(uuid())
+  studentId String
+  lessonId  String
+  completed Boolean  @default(false)
+  score     Float?
+  updatedAt DateTime @updatedAt
+  lesson    Lesson   @relation(fields: [lessonId], references: [id])
+  student   User     @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, lessonId])
+}
+
+model Activity {
+  id        String   @id @default(uuid())
+  studentId String
+  type      String
+  points    Int      @default(0)
+  createdAt DateTime @default(now())
+  student   User     @relation(fields: [studentId], references: [id])
+}
+
+model PersonalQuiz {
+  id        String   @id @default(uuid())
+  topic     String
+  studentId String
+  questions Json
+  score     Int?
+  createdAt DateTime @default(now())
+  student   User     @relation(fields: [studentId], references: [id])
+}
+
+model StudyPlan {
+  id        String   @id @default(uuid())
+  topic     String
+  studentId String
+  content   Json
+  createdAt DateTime @default(now())
+  student   User     @relation(fields: [studentId], references: [id])
+}
+
+model Doubt {
+  id        String   @id @default(uuid())
+  studentId String
+  question  String?
+  image     String?
+  answer    String
+  createdAt DateTime @default(now())
+  student   User     @relation(fields: [studentId], references: [id])
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  studentId String
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  student   User     @relation(fields: [studentId], references: [id])
+}
+
+model Conversation {
+  id        String        @id @default(uuid())
+  studentId String
+  title     String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+  student   User          @relation(fields: [studentId], references: [id])
+}
+
+model ChatMessage {
+  id             String       @id @default(uuid())
+  conversationId String
+  role           String
+  content        String
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
+
+model Discussion {
+  id        String   @id @default(uuid())
+  title     String
+  content   String?
+  category  String   @default("General")
+  authorId  String
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id])
+  replies   Reply[]
+}
+
+model Reply {
+  id           String     @id @default(uuid())
+  content      String
+  discussionId String
+  authorId     String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  author       User       @relation(fields: [authorId], references: [id])
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
