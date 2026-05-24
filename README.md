@@ -71,6 +71,7 @@ Follow these instructions to get the project running on your local machine.
   1. Create a free project in the [Firebase Console](https://console.firebase.google.com/).
   2. Go to **Build** > **Authentication**, enable the Email/Password and Google sign-in methods.
   3. Go to **Project Settings** > **Service Accounts** and click **Generate new private key**. Keep this downloaded `.json` file safe.
+* **Stripe**: Sign up for a free account at [dashboard.stripe.com](https://dashboard.stripe.com/). Navigate to **Developers** > **API keys** to get your publishable and secret keys. Also create a webhook endpoint (for local dev, use the Stripe CLI) pointing to `{BACKEND_URL}/api/payments/webhook` to collect the `checkout.session.completed` event.
 
 ---
 
@@ -86,21 +87,31 @@ Follow these instructions to get the project running on your local machine.
 3. **Configure Environment Variables**:
    Create a new file named `.env` in the `backend/` folder and paste the following template:
    ```env
-   # PostgreSQL database connection string (obtained from Neon)
-   DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require"
-   
-   # Server Port
-   PORT=5000
-   
-   # Mode (development or production)
-   NODE_ENV=development
-   
-   # AI Configuration (Obtain from Google AI Studio)
-   GOOGLE_API_KEY="your-gemini-api-key"
-   
-   # Firebase Admin Configuration (Copy values from your downloaded Firebase .json key file)
-   FIREBASE_SERVICE_ACCOUNT='{"type":"service_account","project_id":"your-project-id","private_key":"-----BEGIN PRIVATE KEY-----\n..."}'
-   ```
+    # PostgreSQL database connection string (obtained from Neon)
+    DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require"
+    
+    # Server Port
+    PORT=5000
+    
+    # Mode (development or production)
+    NODE_ENV=development
+    
+    # AI Configuration (Obtain from Google AI Studio)
+    GOOGLE_API_KEY="your-gemini-api-key"
+    
+    # OpenRouter (alternative AI provider, optional)
+    OPENROUTER_API_KEY="your-openrouter-api-key"
+    
+    # Firebase Admin Configuration (Copy values from your downloaded Firebase .json key file)
+    FIREBASE_SERVICE_ACCOUNT='{"type":"service_account","project_id":"your-project-id","private_key":"-----BEGIN PRIVATE KEY-----\n..."}'
+    
+    # Stripe Payments (Obtain from https://dashboard.stripe.com/apikeys)
+    STRIPE_SECRET_KEY="sk_test_your_stripe_secret_key"
+    STRIPE_WEBHOOK_SECRET="whsec_your_webhook_secret"
+    
+    # Frontend URL (for Stripe redirect URLs)
+    FRONTEND_URL="http://localhost:3000"
+    ```
 4. **Initialize the Database**:
    Run the following commands to push your schema definitions to Neon and generate the Prisma Client:
    ```bash
@@ -127,17 +138,20 @@ Follow these instructions to get the project running on your local machine.
 3. **Configure Environment Variables**:
    Create a new file named `.env.local` in the `frontend/` folder and paste the following template:
    ```env
-   # API Server Endpoint URL
-   NEXT_PUBLIC_API_URL="http://localhost:5000/api"
-   
-   # Firebase Web App Config (Obtained from Firebase Console > Project Settings > General > Your Apps)
-   NEXT_PUBLIC_FIREBASE_API_KEY="your-web-api-key"
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="your-auth-domain.firebaseapp.com"
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID="your-project-id"
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="your-storage-bucket.appspot.com"
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
-   NEXT_PUBLIC_FIREBASE_APP_ID="your-app-id"
-   ```
+    # API Server Endpoint URL
+    NEXT_PUBLIC_API_URL="http://localhost:5000/api"
+    
+    # Firebase Web App Config (Obtained from Firebase Console > Project Settings > General > Your Apps)
+    NEXT_PUBLIC_FIREBASE_API_KEY="your-web-api-key"
+    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="your-auth-domain.firebaseapp.com"
+    NEXT_PUBLIC_FIREBASE_PROJECT_ID="your-project-id"
+    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="your-storage-bucket.appspot.com"
+    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
+    NEXT_PUBLIC_FIREBASE_APP_ID="your-app-id"
+    
+    # Stripe Publishable Key (Obtain from https://dashboard.stripe.com/apikeys)
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_your_stripe_publishable_key"
+    ```
 4. **Start the Next.js Dev Server**:
    ```bash
    npm run dev
