@@ -36,6 +36,7 @@ The project is structured as a monorepo containing decoupled frontend and backen
 * ⚡ **Streak & Gamification**: Interactive activity tracker and heatmaps that count learning points, levels, and consecutive login streaks.
 * 📚 **Responsive Course Viewer**: Track enrollment, monitor progress bars, and read lessons rendered in rich, styled Markdown.
 * 📓 **Smart Summarizer**: Instantly turns long texts or external study notes into clear, bullet-pointed summaries.
+* 💬 **Community Forum**: Browse and participate in discussions categorized by topic (AI Skills, Development, Soft Skills, Showcase). Post threads, reply to conversations, and earn contributor points.
 
 ### 👨‍🏫 Instructor Workspace
 * 🪄 **AI Course Wizard**: Just type a topic, target audience, and duration, and the AI automatically designs a complete multi-week course syllabus and generates the lesson content.
@@ -71,8 +72,6 @@ Follow these instructions to get the project running on your local machine.
   1. Create a free project in the [Firebase Console](https://console.firebase.google.com/).
   2. Go to **Build** > **Authentication**, enable the Email/Password and Google sign-in methods.
   3. Go to **Project Settings** > **Service Accounts** and click **Generate new private key**. Keep this downloaded `.json` file safe.
-* **Stripe**: Sign up for a free account at [dashboard.stripe.com](https://dashboard.stripe.com/). Navigate to **Developers** > **API keys** to get your publishable and secret keys. Also create a webhook endpoint (for local dev, use the Stripe CLI) pointing to `{BACKEND_URL}/api/payments/webhook` to collect the `checkout.session.completed` event.
-
 ---
 
 ### 2. Backend Setup
@@ -104,13 +103,6 @@ Follow these instructions to get the project running on your local machine.
     
     # Firebase Admin Configuration (Copy values from your downloaded Firebase .json key file)
     FIREBASE_SERVICE_ACCOUNT='{"type":"service_account","project_id":"your-project-id","private_key":"-----BEGIN PRIVATE KEY-----\n..."}'
-    
-    # Stripe Payments (Obtain from https://dashboard.stripe.com/apikeys)
-    STRIPE_SECRET_KEY="sk_test_your_stripe_secret_key"
-    STRIPE_WEBHOOK_SECRET="whsec_your_webhook_secret"
-    
-    # Frontend URL (for Stripe redirect URLs)
-    FRONTEND_URL="http://localhost:3000"
     ```
 4. **Initialize the Database**:
    Run the following commands to push your schema definitions to Neon and generate the Prisma Client:
@@ -148,9 +140,6 @@ Follow these instructions to get the project running on your local machine.
     NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="your-storage-bucket.appspot.com"
     NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
     NEXT_PUBLIC_FIREBASE_APP_ID="your-app-id"
-    
-    # Stripe Publishable Key (Obtain from https://dashboard.stripe.com/apikeys)
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_your_stripe_publishable_key"
     ```
 4. **Start the Next.js Dev Server**:
    ```bash
