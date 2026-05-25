@@ -7,7 +7,6 @@ import { PrismaClient } from '@prisma/client';
 import aiRoutes from './routes/ai';
 import courseRoutes from './routes/courses';
 import userRoutes from './routes/users';
-import paymentRoutes from './routes/payments';
 import communityRoutes from './routes/community';
 import logger from './lib/logger';
 
@@ -23,9 +22,6 @@ app.use(helmet());
 app.use(morgan('combined', {
   stream: { write: (message) => logger.http(message.trim()) }
 }));
-
-// Webhook needs raw body, so mount it before express.json()
-app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
 
 app.use(express.json());
 
@@ -84,7 +80,6 @@ app.post('/api/users/sync', async (req, res) => {
 app.use('/api/ai', aiRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/payments', paymentRoutes);
 app.use('/api/community', communityRoutes);
 
 app.listen(PORT, () => {

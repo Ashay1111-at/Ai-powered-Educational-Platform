@@ -126,4 +126,62 @@ router.post('/discussions/:id/replies', authMiddleware, async (req: AuthRequest,
   }
 });
 
+// Get community stats (total users, discussions, replies)
+router.get('/stats', async (req, res) => {
+  try {
+    const [totalUsers, totalDiscussions, totalReplies] = await Promise.all([
+      prisma.user.count(),
+      prisma.discussion.count(),
+      prisma.reply.count()
+    ]);
+
+    res.json({ totalUsers, totalDiscussions, totalReplies });
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+});
+
+// Get top contributors by activity
+router.get('/top-contributors', async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        avatar: true,
+        _count: {
+          select: {
+            discussions: true,
+            replies: true
+          }
+        }
+      },
+      orderBy: {
+        replies: {
+          _count: 'desc'
+        }
+      },
+      take: 10
+    });
+
+    const contributors = users
+      .map((user) => ({
+        id: user.id,
+        name: user.name || 'Anonymous',
+        avatar: user.avatar,
+        points: (user._count.discussions * 10) + (user._count.replies * 5),
+        discussions: user._count.discussions,
+        replies: user._count.replies,
+      }))
+      .sort((a, b) => b.points - a.points)
+      .map((user, index) => ({ ...user, rank: index + 1 }));
+
+    res.json(contributors);
+  } catch (error) {
+    console.error('Error fetching top contributors:', error);
+    res.status(500).json({ error: 'Failed to fetch top contributors' });
+  }
+});
+
 export default router;

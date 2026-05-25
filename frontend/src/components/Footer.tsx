@@ -58,7 +58,6 @@ const footerLinks = {
     { label: "Courses", href: "/courses" },
     { label: "AI Tutor", href: "/login" },
     { label: "Quiz Generator", href: "/login" },
-    { label: "Pricing", href: "/pricing" },
   ],
   Company: [
     { label: "About Us", href: "/about" },

@@ -24,19 +24,31 @@ interface Discussion {
   };
 }
 
+interface Contributor {
+  id: string;
+  name: string;
+  avatar?: string;
+  points: number;
+  discussions: number;
+  replies: number;
+  rank: number;
+}
+
 const categories = ["All", "AI Skills", "Development", "Soft Skills", "Showcase"];
 
-const topContributors = [
-  { name: "Emily R.", points: 1250, badge: "text-yellow-500" },
-  { name: "Alex K.", points: 980, badge: "text-gray-400" },
-  { name: "Tom H.", points: 840, badge: "text-gray-400" },
-  { name: "Sarah J.", points: 720, badge: "text-amber-600" },
-];
+const rankBadges: Record<number, string> = {
+  1: "text-yellow-500",
+  2: "text-gray-400",
+  3: "text-amber-600",
+};
 
 export default function CommunityPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [discussions, setDiscussions] = useState<Discussion[]>([]);
+  const [contributors, setContributors] = useState<Contributor[]>([]);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalDiscussions, setTotalDiscussions] = useState(0);
   const [loading, setLoading] = useState(true);
   
   // Post discussion state
@@ -48,7 +60,34 @@ export default function CommunityPage() {
 
   useEffect(() => {
     fetchDiscussions();
+    fetchContributors();
+    fetchStats();
   }, []);
+
+  const fetchContributors = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/community/top-contributors`);
+      if (res.ok) {
+        const data = await res.json();
+        setContributors(data);
+      }
+    } catch (error) {
+      console.error("Error fetching contributors:", error);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/community/stats`);
+      if (res.ok) {
+        const data = await res.json();
+        setTotalUsers(data.totalUsers);
+        setTotalDiscussions(data.totalDiscussions);
+      }
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  };
 
   const fetchDiscussions = async () => {
     try {
@@ -129,7 +168,7 @@ export default function CommunityPage() {
               className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-bold mb-6"
             >
               <Users size={16} />
-              <span>10,000+ Active Learners</span>
+              <span>{totalUsers.toLocaleString()}+ Active Learners</span>
             </motion.div>
             <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4">
               AI SMART <span className="text-primary">Community</span>
@@ -200,9 +239,12 @@ export default function CommunityPage() {
                   <AnimatePresence mode="popLayout">
                     {filteredDiscussions.length > 0 ? (
                       filteredDiscussions.map((discussion, i) => (
+                        <Link
+                          href={`/community/${discussion.id}`}
+                          key={discussion.id}
+                        >
                         <motion.div
                           layout
-                          key={discussion.id}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, scale: 0.95 }}
@@ -240,6 +282,7 @@ export default function CommunityPage() {
                             </div>
                           </div>
                         </motion.div>
+                        </Link>
                       ))
                     ) : (
                       <motion.div 
@@ -289,8 +332,8 @@ export default function CommunityPage() {
                   Top Contributors
                 </h3>
                 <div className="space-y-4">
-                  {topContributors.map((user, i) => (
-                    <div key={user.name} className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors">
+                  {contributors.slice(0, 5).map((user) => (
+                    <div key={user.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary">
                           {user.name.charAt(0)}
@@ -300,34 +343,33 @@ export default function CommunityPage() {
                           <p className="text-xs text-muted-foreground">{user.points} pts</p>
                         </div>
                       </div>
-                      <Award size={18} className={user.badge} />
+                      {rankBadges[user.rank] && <Award size={18} className={rankBadges[user.rank]} />}
                     </div>
                   ))}
+                  {contributors.length === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-4">No contributors yet</p>
+                  )}
                 </div>
               </div>
 
               <div className="glass border border-border p-8 rounded-3xl">
                 <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
                   <BookOpen size={20} className="text-primary" />
-                  Upcoming Events
+                  Community Stats
                 </h3>
-                <div className="space-y-6">
-                  {[
-                    { date: "May 15", title: "AI Workshop: RAG Systems", type: "Live Coding" },
-                    { date: "May 18", title: "Student Meetup: NYC", type: "Networking" },
-                    { date: "May 22", title: "Career Talk: AI in 2026", type: "Webinar" },
-                  ].map((event, i) => (
-                    <div key={i} className="flex gap-4 items-start">
-                      <div className="bg-muted px-3 py-2 rounded-lg text-center min-w-[60px]">
-                        <p className="text-[10px] uppercase font-bold text-muted-foreground">{event.date.split(' ')[0]}</p>
-                        <p className="text-lg font-black leading-none">{event.date.split(' ')[1]}</p>
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-sm">{event.title}</h4>
-                        <p className="text-xs text-muted-foreground">{event.type}</p>
-                      </div>
-                    </div>
-                  ))}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 rounded-xl bg-muted/30">
+                    <span className="text-sm font-medium">Total Discussions</span>
+                    <span className="text-lg font-black text-primary">{totalDiscussions.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 rounded-xl bg-muted/30">
+                    <span className="text-sm font-medium">Active Members</span>
+                    <span className="text-lg font-black text-primary">{totalUsers.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 rounded-xl bg-muted/30">
+                    <span className="text-sm font-medium">Contributors</span>
+                    <span className="text-lg font-black text-primary">{contributors.length}</span>
+                  </div>
                 </div>
               </div>
             </div>

@@ -14,8 +14,6 @@ model User {
   role            Role           @default(STUDENT)
   firebaseUid     String         @unique
   avatar          String?
-  subscriptionPlan String        @default("FREE")
-  stripeCustomerId String?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
   activities      Activity[]
