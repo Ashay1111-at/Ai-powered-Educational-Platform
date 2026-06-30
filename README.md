@@ -60,6 +60,19 @@ To ensure zero service downtime during network drops or API rate-limit errors (e
 * **Vision Fallback**: Inspects file buffers to output structured visual doubt advice.
 
 ---
+*<img width="1895" height="913" alt="Screenshot 2026-05-21 002718" src="https://github.com/user-attachments/assets/9e50a1a9-f152-4f65-b8f4-a6f3b74d1743" />
+<img width="1888" height="885" alt="Screenshot 2026-05-21 002741" src="https://github.com/user-attachments/assets/cf5509e9-0485-4c06-8e3d-01079b3ebe91" />
+<img width="1881" height="887" alt="Screenshot 2026-05-21 002801" src="https://github.com/user-attachments/assets/d3d4d922-a6ed-4c67-90be-1054e8277635" />
+**Home Page**
+
+<img width="1892" height="902" alt="Screenshot 2026-05-21 002838" src="https://github.com/user-attachments/assets/3f9a9161-71d7-4605-9d8c-0fe4a44dab04" />
+**Admin Panel**
+
+<img width="1909" height="909" alt="Screenshot 2026-05-21 002932" src="https://github.com/user-attachments/assets/f2cebc0c-dd4c-4e37-b50f-4489dd537418" />
+**Instructor panel**
+
+<img width="1899" height="909" alt="Screenshot 2026-05-21 003004" src="https://github.com/user-attachments/assets/d1673897-b257-4c7a-9576-f8f5527e3923" />
+**Student panel**
 
 ## ⚙️ Step-by-Step Installation Guide (Beginner Friendly)
 
