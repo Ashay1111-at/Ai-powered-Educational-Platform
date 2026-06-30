@@ -65,13 +65,13 @@ To ensure zero service downtime during network drops or API rate-limit errors (e
 <img width="1881" height="887" alt="Screenshot 2026-05-21 002801" src="https://github.com/user-attachments/assets/d3d4d922-a6ed-4c67-90be-1054e8277635" />
 **Home Page**
 
-<img width="1892" height="902" alt="Screenshot 2026-05-21 002838" src="https://github.com/user-attachments/assets/3f9a9161-71d7-4605-9d8c-0fe4a44dab04" />
+*<img width="1892" height="902" alt="Screenshot 2026-05-21 002838" src="https://github.com/user-attachments/assets/3f9a9161-71d7-4605-9d8c-0fe4a44dab04" />
 **Admin Panel**
 
-<img width="1909" height="909" alt="Screenshot 2026-05-21 002932" src="https://github.com/user-attachments/assets/f2cebc0c-dd4c-4e37-b50f-4489dd537418" />
+*<img width="1909" height="909" alt="Screenshot 2026-05-21 002932" src="https://github.com/user-attachments/assets/f2cebc0c-dd4c-4e37-b50f-4489dd537418" />
 **Instructor panel**
 
-<img width="1899" height="909" alt="Screenshot 2026-05-21 003004" src="https://github.com/user-attachments/assets/d1673897-b257-4c7a-9576-f8f5527e3923" />
+*<img width="1899" height="909" alt="Screenshot 2026-05-21 003004" src="https://github.com/user-attachments/assets/d1673897-b257-4c7a-9576-f8f5527e3923" />
 **Student panel**
 
 ## ⚙️ Step-by-Step Installation Guide (Beginner Friendly)
