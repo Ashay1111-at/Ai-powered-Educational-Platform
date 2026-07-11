@@ -3,7 +3,7 @@
 EduAI is a next-generation EdTech platform built with **Next.js**, **Express**, and **Neon PostgreSQL**. It utilizes **Firebase Authentication** and advanced LLMs (via **LangChain** with **Gemini / OpenRouter**) to deliver adaptive, interactive, and offline-resilient learning experiences for students, instructors, and administrators.
 
 ---
-
+ 
 ## 📂 Project Architecture
 
 The project is structured as a monorepo containing decoupled frontend and backend applications:
